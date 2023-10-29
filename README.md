@@ -28,13 +28,13 @@ WLS comes with Windows, so you already have it installed. On top of that, rememb
 
 Here some primary steps to get you started with Ubuntu 22.04, [here](https://learn.microsoft.com/en-us/windows/wsl/install) for the full documentation:
 
-```powershell
+```sh
 # List available distributions available on WLS
 wsl --list --online
 
 # Install distribution
 # e.g. Ubuntu-22.04
-wsl --install Ubuntu-22.04
+wsl --install -d Ubuntu-22.04
 ```
 
 Follow the instructions on screen and create username and password to access elevated privileges via the `sudo` command.
@@ -66,7 +66,7 @@ The WSL2 configuration is done on two levels: global configuration, which affect
 
 By default, WSL uses 50% of the available physical RAM, in addition to a swap partition that works similarly to the [Windows page file](https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/introduction-to-the-page-file). To customize this parameter, along with the max number of processor available to the WLS, the following lines must be updated inside `.wslconfig`:
 
-```powershell
+```sh
 # Settings apply across all distros running on WSL2
 [wsl2]
 
@@ -88,7 +88,7 @@ There are many other options available for customization, but these are the basi
 
 #### Local configuration
 
-Unless specific requirements must be met, you do not necessarily need to tweak the local configuration. However, if you are planning on using `R` inside WSL, you may want to consider enabling `systemd`. This is a basic suite of tools that allows a Linux system to run smoothly and operate as PID 1 (i.e. process ID 1, in charge of starting and shutting down the system). The downside of enabling `systemd` is a higher CPU and RAM consumption while WSL is running. In my case, I had experienced an increase in idling from 3-5% CPU consumption (no `systemd`) to up to 12-15% CPU consumption with `systemd` enabled 😞.
+Unless specific requirements must be met, you do not necessarily need to tweak the local configuration. However, if you are planning on using `R` inside WSL, you may want to consider enabling `systemd`. This is a basic suite of tools that allows a Linux system to run smoothly and operate as PID 1 (i.e. process ID 1, in charge of starting and shutting down the system). The downside of enabling `systemd` is a higher CPU and RAM consumption while WSL is running. In my case, I had experienced an increase in idling from 3-5% CPU consumption (no `systemd`) to up to 10-15% CPU consumption with `systemd` enabled 😞.
 
 
 ## 💻 Workflow integration
@@ -96,11 +96,7 @@ Unless specific requirements must be met, you do not necessarily need to tweak t
 
 That's it, once the basic configuration steps are completed, you can call Linux from the Windows start menu, with its dedicated CLI, or call it inside the Windows Terminal, which you can customize its appearance of.
 
-In order to better integrate WSL into your workflow, you may want to consider the following additional steps:
-
-* Prepare the environment to run your code
-* Install Visual Studio Code (VSC) for seamless WSL integration (others IDE work)
-* Fire the IDE instance from the Linux terminal to run your code inside the WLS
+In order to better integrate WSL into your workflow, you want to install an IDE which supports WSL integration. This guide will go over how to set it up in VSC or any JetBrain IDE. 
 
 
 ### Prepare for coding
@@ -108,7 +104,7 @@ In order to better integrate WSL into your workflow, you may want to consider th
 
 Unfortunately, due to the nature of the operating system, you can not directly transfer or clone an existing `python` environment or `R` library from Windows to Linux, you have to start from scratch 🙂. 
 
-To begin with, you need to have (1) your Linux repository and UNIX compiler updated and (2) a package manager like `mamba` or `conda` installed (refer to their documentation). This piece of code will do for (1) `sudo apt update && sudo apt upgrade` (input the installation password). Furthermore, whereas `python` comes with the Linux installation, `R` needs to be installed afterwards (no separate RTools installation is required):
+To begin with, you need to have (1) your Linux repository and UNIX compiler updated and (2) a package manager like `mamba` or `conda` installed (refer to their documentation). This piece of code will do for (1) `sudo apt update && sudo apt upgrade` (password required). Furthermore, whereas `python` comes with the Linux installation, `R` needs to be installed afterward (no separate RTools installation is required):
 
 ```sh
 # Add repository for package access and download
@@ -124,9 +120,9 @@ To launch R and install the desired packages, run `sudo R` inside the terminal. 
 
 ### Start coding
 
-Now it is finally time to start coding and pick an IDE. Visual Studio Code (VSC) is used in this tutorial, but other IDE may work similarly. For all the RStudio fans, you can not connect your Windows version with WSL, but you can install RStudio inside WSL, enable GUI application in the `.wslconfig` file, and fire it from the terminal. However, because it is a GUI inside WSL, expect slowing downs. However, if you feel "experimental" 🧪 you can code directly inside the terminal and forget about GUI-related slowing downs 🏎️. 
+Now it is finally time to start coding and pick an IDE (e.g. Visual Studio Code, VSC or JetBrain). For all the RStudio fans, you can not connect your Windows version to WSL, but you can install RStudio inside WSL, enable GUI application in the `.wslconfig` file, and fire it from the terminal. However, because it is a GUI inside WSL, expect slowing downs. However, if you feel "experimental" 🧪 you can code directly inside the terminal and forget about GUI-related slowing downs 🏎️. For those less adventurous, you can install plugins inside VSC or JetBrain to improve your R experience.
 
-Back to VSC, it needs to be installed on Windows first (Linux will find its installation). Then, from the Linux terminal, navigate inside your working directory and run `code .` to fire a VSC instance. You will notice the WSL instance on the bottom left corner of the IDE. From now on, you code runs inside WSL and, for example, you can take advantage of simpler parallelization syntax.
+Regarding VSC, it needs to be installed on Windows first (Linux will find its installation). Then, from the Linux terminal, navigate inside your working directory and run `code .` to fire an instance. You will notice the WSL icon on the bottom left corner of the IDE. From now on, you code runs inside WSL and you can take advantage of simpler parallelization syntax. Regarding all JetBrain products, please refer to their detailed documentation [here for Pycharm](https://www.jetbrains.com/help/pycharm/using-wsl-as-a-remote-interpreter.html)
 
 _If you plan on doing any resource monitoring inside WLS, bear in mind that the it is relative to the virtual machine resources and not fully explanatory of the overall resources used by your machine._
 
